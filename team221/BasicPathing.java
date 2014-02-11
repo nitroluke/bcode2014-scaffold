@@ -1,4 +1,4 @@
-package cowRush2;
+package team221;
 
         import java.util.ArrayList;
 
@@ -45,7 +45,7 @@ public class BasicPathing{
                     if(sneak){
                         RobotPlayer.rc.sneak(trialDir);
                     }else{
-                        RobotPlayer.rc.move(trialDir);
+                        RobotPlayer.rc.sneak(trialDir);
                     }
                     //snailTrail.remove(0);
                     //snailTrail.add(rc.getLocation());

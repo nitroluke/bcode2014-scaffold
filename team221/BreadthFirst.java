@@ -1,4 +1,4 @@
-package cowRush2;
+package team221;
 
         import java.util.ArrayList;
         import java.util.Hashtable;
@@ -86,8 +86,8 @@ public class BreadthFirst {
         try{
             listDirections(start,goal);//write maplocations to "path"\
         }catch(Exception e){
-            printDirectionArray(start,goal);
-            MapAssessment.printBigCoarseMap(rc);
+//            printDirectionArray(start,goal);
+//            MapAssessment.printBigCoarseMap(rc);
             //RobotPlayer.die=true;
             //the goal is inaccessible
             //find a different goal
@@ -168,22 +168,22 @@ public class BreadthFirst {
         return rc.getLocation().directionTo(VectorFunctions.bigBoxCenter(path.get(0),bigBoxSize));
     }
 
-    public static void printDirectionArray(MapLocation start, MapLocation goal){
-        System.out.println("Direction map:");
-        System.out.println("start: "+start+", goal: "+goal);
-        for(int x=0;x<BreadthFirst.pathingData[0].length;x++){
-            for(int y=0;y<BreadthFirst.pathingData.length;y++){
-                Direction d = BreadthFirst.pathingData[x][y];
-                if(d==null){
-                    System.out.print("X");
-                }else{
-                    System.out.print(d.ordinal());
-                }
-            }
-            System.out.println();
-        }
-        System.out.println("done printing map.");
-    }
+//    public static void printDirectionArray(MapLocation start, MapLocation goal){
+//        System.out.println("Direction map:");
+//        System.out.println("start: "+start+", goal: "+goal);
+//        for(int x=0;x<BreadthFirst.pathingData[0].length;x++){
+//            for(int y=0;y<BreadthFirst.pathingData.length;y++){
+//                Direction d = BreadthFirst.pathingData[x][y];
+//                if(d==null){
+//                    System.out.print("X");
+//                }else{
+//                    System.out.print(d.ordinal());
+//                }
+//            }
+//            System.out.println();
+//        }
+//        System.out.println("done printing map.");
+//    }
 
     //mapData[0][0], array query apparently costs 6 bytecodes
     //using getMapData, which adds an offset, costs 14 bytecodes (8 extra, confirmed two ways)

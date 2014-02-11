@@ -1,9 +1,6 @@
-package cowRush2;
+package team221;
 
-//things to do:
-//defend pastrs that are under attack, or at least consider defending them
-//battlecry when charging into battle -> concerted effort
-//something like the opposite of a battlecry, when you're sure you're outnumbered
+//please do not mistake this for my code this is merely and edited lecture bot.
 
         import java.util.ArrayList;
         import java.util.Random;
@@ -57,6 +54,9 @@ public class RobotPlayer{
                         break;
                 }else if(rc.getType()==RobotType.SOLDIER){
                     runSoldier();
+                }
+                else if(rc.getType() == RobotType.NOISETOWER){
+                    shootPastr();
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -198,33 +198,40 @@ public class RobotPlayer{
     private static void considerBuildingPastr(Robot[] alliedRobots) throws GameActionException {
         if(alliedRobots.length>4){//there must be allies nearby for defense
             MapLocation[] alliedPastrs =rc.sensePastrLocations(rc.getTeam());
+            MapLocation[] enemyPastrs = rc.sensePastrLocations(rc.getTeam().opponent());
             if(alliedPastrs.length<5&&(rc.readBroadcast(50)+60<Clock.getRoundNum())){//no allied robot can be building a pastr at the same time
                 for(int i=0;i<20;i++){
                     MapLocation checkLoc = VectorFunctions.mladd(rc.getLocation(),new MapLocation(randall.nextInt(8)-4,randall.nextInt(8)-4));
+
                     if(rc.canSenseSquare(checkLoc)){
-                        double numberOfCows = rc.senseCowsAtLocation(checkLoc);
-                        if(numberOfCows>1000){//there must be a lot of cows there
-                            if(alliedPastrs.length==0){//there must not be another pastr nearby
-                                buildPastr(checkLoc);
-                            }else{
-                                MapLocation closestAlliedPastr = VectorFunctions.findClosest(alliedPastrs, checkLoc);
-                                if(closestAlliedPastr.distanceSquaredTo(checkLoc)>GameConstants.PASTR_RANGE*5){
+                        MapLocation closestEnemyPastr = VectorFunctions.findClosest(enemyPastrs, checkLoc); // added this
+                        if(closestEnemyPastr.distanceSquaredTo(closestEnemyPastr) <= 50){
+                            double numberOfCows = rc.senseCowsAtLocation(checkLoc);
+                            if(numberOfCows >= 500){//there must be a lot of cows there
+                                if(alliedPastrs.length < 2){//there must not be another pastr nearby
                                     buildPastr(checkLoc);
+                                }
+//                                else{
+//                                    MapLocation closestAlliedPastr = VectorFunctions.findClosest(alliedPastrs, checkLoc);
+//                                    if(closestAlliedPastr.distanceSquaredTo(checkLoc)>GameConstants.PASTR_RANGE*5){
+//                                        buildPastr(checkLoc);
+//                                    }
                                 }
                             }
                         }
+
                     }
                 }
             }
         }
-    }
+//    }
 
     private static void buildPastr(MapLocation checkLoc) throws GameActionException {
         rc.broadcast(50, Clock.getRoundNum());
         for(int i=0;i<100;i++){//for 100 rounds, try to build a pastr
             if(rc.isActive()){
                 if(rc.getLocation().equals(checkLoc)){
-                    rc.construct(RobotType.PASTR);
+                   rc.construct(RobotType.PASTR);
                 }else{
                     Direction towardCows = rc.getLocation().directionTo(checkLoc);
                     BasicPathing.tryToMove(towardCows, true,true, true);
@@ -233,6 +240,8 @@ public class RobotPlayer{
             rc.yield();
         }
     }
+
+
 
     private static void regroup(Robot[] enemyRobots, Robot[] alliedRobots,MapLocation closestEnemyLoc) throws GameActionException {
         int enemyAttackRangePlusBuffer = (int) Math.pow((Math.sqrt(rc.getType().attackRadiusMaxSquared)+1),2);
@@ -260,21 +269,18 @@ public class RobotPlayer{
         }
     }
 
+    private static void shootPastr() throws GameActionException {
+        if(rc.isActive()){
+        MapLocation checkLoc = VectorFunctions.mladd(rc.getLocation(),new MapLocation(randall.nextInt(8)-4,randall.nextInt(8)-4));
+        MapLocation[] enemyPastrs = rc.sensePastrLocations(rc.getTeam().opponent());
+        MapLocation closestAlliedPastr = VectorFunctions.findClosest(enemyPastrs, checkLoc);
+        rc.attackSquare(closestAlliedPastr);
+        }
+    }
+
     private static MapLocation getRandomLocation() {
         return new MapLocation(randall.nextInt(rc.getMapWidth()),randall.nextInt(rc.getMapHeight()));
     }
 
-    private static void simpleMove(Direction chosenDirection) throws GameActionException{
-        if(rc.isActive()){
-            for(int directionalOffset:directionalLooks){
-                int forwardInt = chosenDirection.ordinal();
-                Direction trialDir = allDirections[(forwardInt+directionalOffset+8)%8];
-                if(rc.canMove(trialDir)){
-                    rc.move(trialDir);
-                    break;
-                }
-            }
-        }
-    }
 
 }
